@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuyue.mapper.ReviewBackMapper">
+
+    <!-- 通用查询映射结果 -->
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tuyue.entity.ReviewBack">
+        <id column="did" property="did" />
+        <result column="aid" property="aid" />
+        <result column="bid" property="bid" />
+        <result column="review_type" property="reviewType" />
+        <result column="true_grade" property="trueGrade" />
+        <result column="serve_grade" property="serveGrade" />
+        <result column="review_content" property="reviewContent" />
+        <result column="review_time" property="reviewTime" />
+        <result column="is_approve" property="isApprove" />
+        <result column="user_name" property="userName" />
+        <result column="user_img" property="userImg" />
+        <result column="ip" property="ip" />
+        <result column="by_aid" property="byAid" />
+        <result column="type" property="type" />
+        <result column="orderId" property="orderId" />
+    </resultMap>
+
+    <select id="selectByBidAndIp" resultType="com.tuyue.entity.ReviewBack">
+        select did from review_back
+        where bid=#{bid}
+         and ip=#{ip}
+         and to_days(review_time) = to_days(now())
+    </select>
+
+    <select id="selectListbyBid"  resultType="com.tuyue.entity.ReviewBack">
+       select * from review_back
+        where
+        bid in( select bid from carport where aid=(select aid from carport where bid=#{bid}))
+        and is_del=2
+        and review_type=#{reviewType}
+        order by review_time desc
+
+    </select>
+    
+    <select id="selectByBidGroupType" resultType="com.tuyue.webModel.carport.bean.ReviewBacCountkBean">
+        SELECT COUNT(*) num,review_type FROM review_back
+        WHERE
+          bid IN
+        (SELECT bid FROM carport WHERE aid=(SELECT aid FROM carport WHERE bid=#{bid}))
+        GROUP BY review_type
+    </select>
+
+    <select id="selectByBidGroupTypelist" resultType="com.tuyue.entity.ReviewBack">
+        SELECT * FROM review_back
+        WHERE
+          bid IN
+        (SELECT bid FROM carport WHERE aid=(SELECT aid FROM carport WHERE bid=#{bid}))
+        GROUP BY review_type
+    </select>
+
+</mapper>

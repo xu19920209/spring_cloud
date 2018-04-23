@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuyue.mapper.CarportImgMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tuyue.entity.CarportImg">
+        <result column="bid" property="bid" />
+        <result column="img_url" property="imgUrl" />
+        <result column="img_type" property="imgType" />
+    </resultMap>
+
+    <select id="selectTypeByBid" resultType="com.tuyue.entity.CarportImg">
+        select * from
+        carport_img
+        where bid=#{bid}
+        and (img_type=3
+        or img_type=4)
+    </select>
+
+</mapper>

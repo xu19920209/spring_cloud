@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuyue.mapper.CarportMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tuyue.entity.Carport">
+        <id column="bid" property="bid" />
+        <result column="aid" property="aid" />
+        <result column="hourse_id" property="hourseId" />
+        <result column="title" property="title" />
+        <result column="carport_type" property="carportType" />
+        <result column="max_size" property="maxSize" />
+        <result column="car_size" property="carSize" />
+        <result column="car_wide" property="carWide" />
+        <result column="car_high" property="carHigh" />
+        <result column="car_weight" property="carWeight" />
+        <result column="rent_type" property="rentType" />
+        <result column="fix_carport" property="fixCarport" />
+        <result column="carport_money" property="carportMoney" />
+        <result column="carport_price" property="carportPrice" />
+        <result column="is_sale" property="isSale" />
+        <result column="sale_price" property="salePrice" />
+        <result column="is_lower_money" property="isLowerMoney" />
+        <result column="lower_money" property="lowerMoney" />
+        <result column="lower_price" property="lowerPrice" />
+        <result column="is_oneMoney" property="isOnemoney" />
+        <result column="money_time" property="moneyTime" />
+        <result column="link_name" property="linkName" />
+        <result column="phone" property="phone" />
+        <result column="is_privary" property="isPrivary" />
+        <result column="is_putaway" property="isPutaway" />
+        <result column="carport_num" property="carportNum" />
+        <result column="release_type" property="releaseType" />
+        <result column="titledeed" property="titledeed" />
+        <result column="titledeed_type" property="titledeedType" />
+        <result column="titledeed_time" property="titledeedTime" />
+        <result column="details" property="details" />
+        <result column="titledeed_name" property="titledeedName" />
+        <result column="project_img_name" property="projectImgName" />
+        <result column="flag" property="flag" />
+        <result column="up_time" property="upTime" />
+        <result column="floors" property="floors" />
+        <result column="floors_type" property="floorsType" />
+        <result column="area_code" property="areaCode" />
+        <result column="tele_phone" property="telePhone" />
+        <result column="floors_num_original" property="floorsNumOriginal" />
+        <result column="floors_original" property="floorsOriginal" />
+        <result column="issue_time" property="issueTime" />
+    </resultMap>
+
+
+    <select id="selectCarport" parameterType="com.tuyue.webModel.carport.bean.ParamSearch" resultType="com.tuyue.entity.Carport">
+        select
+        bid,aid,title,carport_type,issue_time,lower_money,lower_price,max_size,flag,
+        hourse_id,rent_type,release_type,issue_time,is_sale,sale_price
+        from carport
+        <where>
+            is_putaway=1
+            <if test=" hourseId!=null and hourseId!='' ">
+             AND hourse_id in ( #{hourseId} )
+            </if>
+            <if test="carportType!=null and carportType==1">
+                AND carport_type like concat('%','露天','%')
+            </if>
+            <if test="carportType!=null and carportType==2">
+                AND carport_type like concat('%','机械','%')
+            </if>
+            <if test="carportType!=null and carportType==3">
+                AND carport_type like concat('%','地下','%')
+            </if>
+            <if test="rentType!=null and rentType!=4">
+               AND rent_type=#{rentType}
+            </if>
+            <if test="rentType!=null and rentType==4">
+              AND is_sale=1
+            </if>
+            <if test="comBusinesId!=null">
+                and com_busines_id=#{comBusinesId}
+            </if>
+            <if test="flag!=null">
+                and flag=#{flag}
+            </if>
+            <if test="rentalscope!=null">
+                and lower_money ${rentalscope}
+            </if>
+        </where>
+    </select>
+
+    <select id="carportAllList" resultType="com.tuyue.entity.Carport">
+        select
+        bid,aid,title,carport_type,issue_time,lower_money,lower_price,max_size,flag,
+        hourse_id,rent_type,release_type
+        from carport
+         where
+        is_putaway=1
+
+    </select>
+
+</mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuyue.mapper.UserAddressMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tuyue.entity.UserAddress">
+        <id column="address_id" property="addressId" />
+        <result column="aid" property="aid" />
+        <result column="recipients_name" property="recipientsName" />
+        <result column="recipients_phone" property="recipientsPhone" />
+        <result column="address" property="address" />
+        <result column="detail_address" property="detailAddress" />
+        <result column="is_default" property="isDefault" />
+    </resultMap>
+
+</mapper>

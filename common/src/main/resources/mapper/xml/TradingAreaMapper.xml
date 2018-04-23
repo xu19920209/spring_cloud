@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuyue.mapper.TradingAreaMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tuyue.entity.TradingArea">
+        <id column="com_busines_id" property="comBusinesId" />
+        <result column="business_circles" property="businessCircles" />
+        <result column="creat_time" property="creatTime" />
+        <result column="source" property="source" />
+    </resultMap>
+
+    <select id="tradingList" parameterType="com.tuyue.entity.TradingArea" resultType="com.tuyue.entity.TradingArea">
+        select com_busines_id,business_circles from
+        trading_area
+        <where>
+            <if test="businessCircles!=null and businessCircles !=''">
+                business_circles LIKE  concat('%',#{businessCircles},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByName" resultType="com.tuyue.entity.TradingArea">
+        select * from trading_area
+        where business_circles=#{name}
+    </select>
+
+</mapper>

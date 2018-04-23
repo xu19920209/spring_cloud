@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuyue.mapper.OrdersMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tuyue.entity.Orders">
+        <result column="order_id" property="orderId"/>
+        <result column="aid" property="aid"/>
+        <result column="address_id" property="addressId"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="bid" property="bid"/>
+        <result column="carport_type" property="carportType"/>
+        <result column="carport_floor" property="carportFloor"/>
+        <result column="carport_no" property="carportNo"/>
+        <result column="carport_unit_money" property="carportUnitMoney"/>
+        <result column="buy_num" property="buyNum"/>
+        <result column="leave_word" property="leaveWord"/>
+        <result column="order_money" property="orderMoney"/>
+        <result column="really_money" property="reallyMoney"/>
+        <result column="pay_way" property="payWay"/>
+        <result column="pay_status" property="payStatus"/>
+        <result column="pay_details" property="payDetails"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="out_time" property="outTime"/>
+        <result column="payment" property="payment"/>
+        <result column="property_name" property="propertyName"/>
+        <result column="property_number" property="propertyNumber"/>
+        <result column="car_home" property="carHome"/>
+        <result column="car_level" property="carLevel"/>
+        <result column="car_number" property="carNumber"/>
+        <result column="merchant_del" property="merchantDel"/>
+        <result column="buyer_del" property="buyerDel"/>
+        <result column="is_appraise" property="isAppraise"/>
+        <result column="cancel_cause" property="cancelCause"/>
+        <result column="type" property="type"/>
+        <result column="deliver_img" property="deliverImg"/>
+        <result column="is_back_appraise" property="isBackAppraise"/>
+        <result column="unit_money" property="unitMoney"></result>
+    </resultMap>
+   <!--删除商家或者买家的订单1商家2买家-->
+    <update id="delOrdersByUser">
+        UPDATE orders
+        <set>
+            <if test="type = 1">merchant_del=1,</if>
+            <if test="type = 1">buyer_del=1</if>
+        </set>
+
+        where order_id#{orderId}
+    </update>
+    <!--下订单时修改订单信息-->
+    <update id="upOrderByNumber">
+        UPDATE orders set really_money=#{0}
+        where order_number=#{1}
+    </update>
+    <!--买家订单list-->
+    <select id="orderList" resultType="com.tuyue.webModel.order.bean.OrderBean">
+        select
+        a.*,
+        b.titledeed_type,
+        b.titledeed_time,
+        b.title,
+        b.rent_type,
+        b.fix_carport,
+        b.link_name as name,
+        b.phone,
+        CONCAT(b.area_code,"-",b.tele_phone) as tel,
+        u.recipients_name,
+        u.recipients_phone,
+        u.address,
+        u.detail_address
+        from orders as a
+        left JOIN
+        carport as b
+        ON
+        a.bid=b.bid
+        left JOIN
+        user_address as u
+        ON
+        u.address_id=a.address_id
+        WHERE
+        a.buyer_del=2
+        and a.aid=#{aid}
+        <if test="time !=null and time=1">
+            and a.order_time >DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+        </if>
+        <if test="time !=null and time=2">
+            and a.order_time >DATE_SUB(CURDATE(), INTERVAL 1 year)
+        </if>
+        <if test="str !=null and str!=''">
+            and ( b.title like CONCAT('%',#{str},'%') or a.order_no like CONCAT('%',#{str},'%'))
+        </if>
+        <choose>
+            <when test="type !=null and type !=-1">
+                and a.order_status=#{type}
+            </when>
+            <!--待评价的订单-->
+            <when test="type !=null and type =-1">
+                and a.order_status=3 and a.is_appraise=2
+            </when>
+        </choose>
+        order by a.order_time desc
+    </select>
+    <!-- 商家订单list-->
+    <select id="orderListMerchant" resultType="com.tuyue.webModel.order.bean.OrderBean">
+        select
+        a.*,
+        b.titledeed_type,
+        b.titledeed_time,
+        b.title,
+        b.rent_type,
+        b.fix_carport,
+        b.link_name as name,
+        b.phone,
+        CONCAT(b.area_code,"-",b.tele_phone) as tel,
+        u.recipients_name,
+        u.recipients_phone,
+        u.address,
+        u.detail_address
+        from orders as a
+        left JOIN
+        carport as b
+        ON
+        a.bid=b.bid
+        left JOIN
+        user_address as u
+        ON
+        u.address_id=a.address_id
+        WHERE
+        a.merchant_del=2
+        and
+        a.bid in ( select bid from carport where aid=#{aid})
+        <if test="time !=null and time=1">
+            and a.order_time >DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+        </if>
+        <if test="time !=null and time=2">
+            and a.order_time >DATE_SUB(CURDATE(), INTERVAL 1 year)
+        </if>
+        <if test="str !=null and str!=''">
+            and ( b.title like CONCAT('%',#{str},'%') or a.order_no like CONCAT('%',#{str},'%'))
+        </if>
+        <choose>
+            <when test="type !=null and type !=-1">
+                and a.order_status=#{type}
+            </when>
+            <!--待评价的订单-->
+            <when test="type !=null and type =-1">
+                and a.order_status=3 and a.is_appraise=2
+            </when>
+        </choose>
+        order by a.order_time desc
+
+    </select>
+    <!--查询 商家或者买家订单类型数量-->
+    <select id="orderTypeNum" resultType="com.tuyue.webModel.order.bean.OrdersCount">
+
+        <if test="type=1">
+            SELECT COUNT(a.order_id) as num, a.order_status as orderStatus FROM orders a,carport b WHERE a.bid=b.bid AND b.aid=#{aid} AND a.merchant_del=2 GROUP BY a.order_status
+            UNION ALL
+            SELECT COUNT(*) AS num ,-1 AS orderStatus FROM orders o,carport b WHERE o.bid=#{aid} AND b.aid=40 AND o.buyer_del=2 AND o.order_status=3 AND o.is_appraise=2
+        </if>
+        <if test="type=2">
+            SELECT COUNT(order_id) as num, order_status as orderStatus FROM orders where aid=#{aid} and buyer_del=2 GROUP BY order_status
+            UNION ALL
+            SELECT COUNT(*) AS num ,-1 AS orderStatus orders where aid=#{aid} and buyer_del=2 and order_status=3 and is_appraise=2
+        </if>
+
+    </select>
+
+    <!-- 查询使用最多的车牌号-->
+    <select id="selectCarNumber" resultType="java.util.Map">
+        SELECT COUNT(*) num, car_level as str  FROM orders WHERE car_home=#{0} GROUP BY  car_level ORDER BY num DESC LIMIT 1
+    </select>
+    <!-- 根据订单号查询订单-->
+    <select id="selectByOrderNumber" resultType="com.tuyue.entity.Orders">
+        SELECT * from orders where order_number=#{0}
+    </select>
+
+
+</mapper>

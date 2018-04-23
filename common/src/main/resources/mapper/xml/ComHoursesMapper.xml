@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuyue.mapper.ComHoursesMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tuyue.entity.ComHourses">
+        <id column="hourse_id" property="hourseId" />
+        <result column="hourse_name" property="hourseName" />
+        <result column="province" property="province" />
+        <result column="city" property="city" />
+        <result column="region" property="region" />
+        <result column="houses_adress" property="housesAdress" />
+        <result column="lng" property="lng" />
+        <result column="lat" property="lat" />
+        <result column="sourse" property="sourse" />
+        <result column="creat_time" property="creatTime" />
+    </resultMap>
+    <delete id="delHourse" parameterType="int">
+        delete from com_hourses where hourse_id=#{id}
+    </delete>
+
+    <select id="comHourseList" parameterType="com.tuyue.entity.ComHourses" resultType="com.tuyue.entity.ComHourses">
+        select * from com_hourses
+        <where>
+        <if test="hourseName!=null">
+            AND hourse_name LIKE concat('%',#{hourseName},'%')
+        </if>
+        <if test="province!=null">
+            AND province LIKE concat ('%',#{province},'%')
+        </if>
+        <if test="city!=null">
+            AND city LIKE concat ('%',#{city},'%')
+        </if>
+        <if test="region!=null">
+            AND region LIKE concat ('%',#{region},'%')
+        </if>
+        </where>
+    </select>
+
+</mapper>

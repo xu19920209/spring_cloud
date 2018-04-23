@@ -1,0 +1,11 @@
+spring:
+    http:
+      multipart:
+        max-file-size: 100Mb  #�����ļ���С
+        max-request-size: 50Mb
+server:
+  servlet:
+    context-path: /upload
+  port: 8888
+upload:
+  url: C:/upload/

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuyue.mapper.LeaveWordMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tuyue.entity.LeaveWord">
+        <result column="word_id" property="wordId" />
+        <result column="aid" property="aid" />
+        <result column="name" property="name" />
+        <result column="content" property="content" />
+        <result column="userHead" property="userHead" />
+        <result column="id" property="id" />
+        <result column="parent_id" property="parentId" />
+        <result column="user_type" property="userType" />
+        <result column="bid" property="bid" />
+        <result column="word_time" property="wordTime" />
+        <result column="type" property="type" />
+        <result column="proveType" property="proveType" />
+    </resultMap>
+    <select id="selectByBid" resultType="com.tuyue.entity.LeaveWord">
+        select * from  level_word
+        where bid=#{bid}
+        and type=1
+        order by word_time desc
+    </select>
+    <select id="selectByID" resultType="com.tuyue.entity.LeaveWord">
+            select * from  level_word
+        where id=#{id}
+        and type=2
+        order by word_time desc
+    </select>
+
+</mapper>

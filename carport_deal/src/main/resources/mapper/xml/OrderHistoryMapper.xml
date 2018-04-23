@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuyue.mapper.OrderHistoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tuyue.entity.OrderHistory">
+        <result column="order_id" property="orderId" />
+        <result column="history_id" property="historyId" />
+        <result column="up_time" property="upTime" />
+        <result column="type" property="type" />
+    </resultMap>
+    <select id="selectUpType" resultType="com.tuyue.entity.OrderHistory">
+        SELECT * from order_history
+        WHERE
+        order_id=#{orderId}
+        and
+        type=#{type}
+        order by up_time desc
+        limit 1
+    </select>
+    <select id="selectAlertNum" resultType="java.lang.Integer">
+        select count(history_id) where order_id=#{0} and type=3 and up_time>#{1}
+    </select>
+
+</mapper>
